@@ -5,6 +5,19 @@ Forked from https://github.com/timbennett/delaunay
 
 <hr>
 
+## Instructions
+At first install dependencies:
+```bash
+npm install
+```
+
+### How to run
+```bash
+npm start
+```
+
+<hr>
+
 A browser-based Delaunay triangulation generator with drag-and-drop uploading. Delaunay triangulation produces a generally recognisable low-polygon version of the original image.
 
 ###[Click here to play with a working example of this code.](http://103.16.129.81/delaunay/)
