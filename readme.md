@@ -16,6 +16,15 @@ npm install
 npm start
 ```
 
+### How to build
+```bash
+npm run build [-- [options...]]
+```
+
+App will be in the project root directory.
+
+More information is [here](https://github.com/electron-userland/electron-packager#usage).
+
 <hr>
 
 A browser-based Delaunay triangulation generator with drag-and-drop uploading. Delaunay triangulation produces a generally recognisable low-polygon version of the original image.
