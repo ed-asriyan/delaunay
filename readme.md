@@ -1,3 +1,10 @@
+# Delaunay triangulator
+**It is computer graphics course project in BMSTU. THIS REPO WILL BE DELETED AFTER THE EXAM IS PASSED!**
+
+Forked from https://github.com/timbennett/delaunay
+
+<hr>
+
 A browser-based Delaunay triangulation generator with drag-and-drop uploading. Delaunay triangulation produces a generally recognisable low-polygon version of the original image.
 
 ###[Click here to play with a working example of this code.](http://103.16.129.81/delaunay/)
