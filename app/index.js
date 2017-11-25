@@ -33,7 +33,7 @@
     }
 
     // Handle the form submission by regenerating the image
-    var regenerateForm = document.querySelector('.settings-form');
+    var regenerateForm = document.querySelector('form');
 
     regenerateForm.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -41,9 +41,8 @@
         var message = document.getElementById('message');
         message.innerHTML = GENERATIONG_MESSAGE;
 
-        var inputs = regenerateForm.querySelectorAll('input[type=text]');
-
-        [].forEach.call(inputs, function (input) {
+        var inputs = regenerateForm.querySelectorAll('input');
+        inputs.forEach(function (input) {
             var name = input.name,
                 val = parseFloat(input.value, 10);
 
@@ -53,7 +52,7 @@
         api.regenerate();
     }, false);
 
-    var GENERAL_MESSAGE = 'Drop image to change source.'; // 通常の表示メッセージ
+    var GENERAL_MESSAGE = 'Generate'; // 通常の表示メッセージ
     var GENERATIONG_MESSAGE = 'Generating...'; // 生成中の表示メッセージ
     var IMG_PRESETS = [ // プリセットイメージ
         // insert a list of image files here, users can click these to cycle through them
@@ -202,18 +201,20 @@
      * image の load, window の resize イベントハンドラ
      */
     function adjustImage() {
+        const LEFT_OFFSET = 248;
+
         image.removeAttribute('width');
         image.removeAttribute('height');
         var width  = image.width;
         var height = image.height;
 
-        if (width > window.innerWidth || height > window.innerHeight) {
-            var scale = Math.min(window.innerWidth / width, window.innerHeight / height);
+        if (width > (window.innerWidth - LEFT_OFFSET) || height > window.innerHeight) {
+            var scale = Math.min((window.innerWidth - LEFT_OFFSET) / width, window.innerHeight / height);
             image.width  = width * scale | 0;
             image.height = height * scale | 0;
         }
 
-        image.style.left = ((window.innerWidth - image.width) / 2 | 0) + 'px';
+        image.style.left = (((window.innerWidth - image.width + LEFT_OFFSET) / 2) | 0) + 'px';
         image.style.top  = ((window.innerHeight - image.height) / 2 | 0) + 'px';
     }
 
