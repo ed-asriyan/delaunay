@@ -10,9 +10,9 @@ A browser-based Delaunay triangulation generator with drag-and-drop uploading. D
 ###[Click here to play with a working example of this code.](http://103.16.129.81/delaunay/)
 
 Before and after:
-![Example before and after image](https://github.com/timbennett/delaunay/blob/master/sample.jpg "Before and after Delaunay triangulation")
+![Example before and after image](sample.jpg "Before and after Delaunay triangulation")
 
-##Configuration options (index.js): 
+##Configuration options (app/index.js): 
 
     EDGE_DETECT_VALUE: Lower this to increase edge contrast sensitivity
     POINT_RATE: "Number of points distribution ratio of points (number) on the edge, detail, generated higher see console" (Google Translate of "エッジ上のポイントの分布比率, 高いほど詳細, 生成されたポイント数はコンソールを参照")
