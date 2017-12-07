@@ -1,5 +1,4 @@
 (function(window, document) {
-
     'use strict';
 
     // This object and its contents will be made available to the global/window
@@ -8,18 +7,27 @@
 
     // Configs
 
-	   // (int) 0~255 明るさの平均からエッジを検出する際の最小値を示す, この明るさを超えるピクセルを検出する, 少ないほど詳細
-    api.EDGE_DETECT_VALUE = 80; //50
-    // (number) エッジ上のポイントの分布比率, 高いほど詳細, 生成されたポイント数はコンソールを参照
-    api.POINT_RATE = 0.075; //0.075
-    // (int) ポイントの最大数, POINT_RATE によるポイント数はこの値を超えない, 大きいほど詳細
-    api.POINT_MAX_NUM = 4500; //2500
-    // (int) 細かいエッジを消すために行うほかしのサイズ, 少ないほど詳細
-    api.BLUR_SIZE = 2; //2
-    // (int) エッジ検出のサイズ, 大きいほど詳細
-    api.EDGE_SIZE = 6; //3
-    // (int) 許容ピクセル数, このピクセル数を超える画像が指定された場合リサイズする
-    api.PIXEL_LIMIT = 8000000; //360000
+    // (int) 0 to 255 Detects pixels exceeding this brightness, indicating the minimum value when detecting edges from
+    // the average brightness, less detail
+    api.EDGE_DETECT_VALUE = 80;
+
+    // (number) Distribution ratio of points on the edge, the higher the detail, the number of points generated refer to
+    // the console
+    api.POINT_RATE = 0.075;
+
+    // (int) The maximum number of points, the number of points by POINT_RATE does not exceed this value, the larger the
+    // details
+    api.POINT_MAX_NUM = 4500;
+
+    // (int) Size of others to do to erase fine edges, less detailed
+    api.BLUR_SIZE = 2;
+
+    // (int) The size of edge detection, the larger the detail
+
+    api.EDGE_SIZE = 6;
+
+    // (int) Allowable number of pixels, resize when images exceeding this number of pixels are specified
+    api.PIXEL_LIMIT = 8000000;
 
     // Set the values for each input to the default
     for (var key in window.api) {
@@ -51,9 +59,9 @@
         api.regenerate();
     }, false);
 
-    var GENERAL_MESSAGE = 'Generate'; // 通常の表示メッセージ
-    var GENERATIONG_MESSAGE = 'Generating...'; // 生成中の表示メッセージ
-    var IMG_PRESETS = [ // プリセットイメージ
+    var GENERAL_MESSAGE = 'Generate'; // Normal display message
+    var GENERATIONG_MESSAGE = 'Generating...'; //Display message being generated
+    var IMG_PRESETS = [ // Preset image
         // insert a list of image files here, users can click these to cycle through them
         'lilac-breasted_roller.jpg',
         'apple.jpg'
@@ -66,15 +74,15 @@
 
     var image, source;
     var canvas, context;
-    var imageIndex = IMG_PRESETS.length * Math.random() | 0; // 現在のプリセットのインデックス
-    var message; // メッセージ表示用要素
-    var generating = true; // 生成中であることを示す
-    var timeoutId = null; // 非同期処理用
+    var imageIndex = IMG_PRESETS.length * Math.random() | 0; // Index of the current preset
+    var message; // Message display element
+    var generating = true; // Indicates that it is being generated
+    var timeoutId = null; // For asynchronous processing
 
-    // ログ表示用
+    // For log display
     var generateTime = 0;
 
-    // プリセットイメージをシャッフル
+    // Shuffle the preset image
     var imagePresets = (function(presets) {
         presets = presets.slice();
         var i = presets.length, j, t;
@@ -87,7 +95,7 @@
         return presets;
     })(IMG_PRESETS);
 
-    // ほかし用コンボリューション行列を作成
+    // Create convolution matrix for others
     var blur = (function(size) {
         var matrix = [];
         var side = size * 2 + 1;
@@ -96,7 +104,7 @@
         return matrix;
     })(api.BLUR_SIZE);
 
-    // エッジ検出用コンボリューション行列を作成
+    // Create Convolution Matrix for Edge Detection
     var edge = (function(size) {
         var matrix = [];
         var side = size * 2 + 1;
@@ -138,9 +146,9 @@
      * Document click event handler
      */
     function documentClick(e) {
-        if (generating) return; // 生成中なら抜ける
+        if (generating) return; // If it is generated, it exits
 
-        // 次のプリセット画像を指定してソースを設定
+        // Specify the next preset image and set the source
         imageIndex = (imageIndex + 1) % imagePresets.length;
         setSource(imagePresets[imageIndex]);
     }
@@ -149,16 +157,16 @@
      * Document drop event handler
      */
     function documentDrop(e) {
-        if (generating) return; // 生成中なら抜ける
+        if (generating) return; // If it is generated, it exits
 
         e.preventDefault();
 
         if (!window.FileReader) {
-            alert('ドラッグ&ドロップによるファイル操作に未対応のブラウザです。');
+            alert('It is a browser not compatible with file operation by drag & drop.');
             return;
         }
 
-        // ドロップされた画像ファイルを指定してソースを設定
+        // Specify the dropped image file and set the source
         var reader = new FileReader();
         reader.addEventListener('load', function(e) {
             setSource(e.target.result);
@@ -172,12 +180,12 @@
      * @see setSource()
      */
     function sourceLoadComplete(e) {
-        // 画像サイズのチェック
+        // Check image size
         var width  = source.width;
         var height = source.height;
         var pixelNum = width * height;
         if (pixelNum > api.PIXEL_LIMIT) {
-            // サイズオーバーの場合はリサイズ
+            // Resize when size is over
             var scale = Math.sqrt(api.PIXEL_LIMIT / pixelNum);
             source.width  = width * scale | 0;
             source.height = height * scale | 0;
@@ -186,7 +194,7 @@
             console.log('Source resizing ' + width + 'px x ' + height + 'px' + ' -> ' + source.width + 'px x ' + source.height + 'px');
         }
 
-        // 生成を開始
+        // Start generation
         if (timeoutId) clearTimeout(timeoutId);
         generateTime = new Date().getTime();
         console.log('Generate start...');
@@ -196,8 +204,8 @@
     api.regenerate = sourceLoadComplete;
 
     /**
-     * 画像のサイズと位置を調整する
-     * image の load, window の resize イベントハンドラ
+     * Adjust image size and position
+     * image load, window resize event handler
      */
     function adjustImage() {
         const LEFT_OFFSET = 248;
@@ -218,50 +226,50 @@
     }
 
     /**
-     * ソースを設定する
+     * Set the source
      *
      * @param {String} URL or data
      */
     function setSource(src) {
-        // 生成中であることを示す
+        // Indicates that it is being generated
         generating = true;
         message.innerHTML = GENERATIONG_MESSAGE;
 
         if (source.src !== src) {
-            // サイズを初期化
+            // Initialize size
             source.removeAttribute('width');
             source.removeAttribute('height');
             source.src = src;
         } else {
-            // 画像が同じ場合はイベントハンドラを強制的に実行
+            // Forcibly execute event handler when images are the same
             sourceLoadComplete(null);
         }
     }
 
 
     /**
-     * 画像を生成する
+     * Generate an image
      */
     function generate() {
-        // 画像とキャンバスのサイズを設定して取得し, 検出を開始
+        // Set the size of image and canvas and get it, start detection
         var width  = canvas.width = source.width;
         var height = canvas.height = source.height;
 
         context.drawImage(source, 0, 0, width, height);
 
-        // 処理用 ImageData
+        // Processing with ImageData
         var imageData = context.getImageData(0, 0, width, height);
-        // カラー参照用のピクセル情報
+        // Pixel information for color reference
         var colorData = context.getImageData(0, 0, width, height).data;
 
-        // フィルタを適用, グレースケール, ぼかし, エッジ検出
+        // Filter applied, grayscale, blurring, edge detection
         Filter.grayscaleFilterR(imageData);
         Filter.convolutionFilterR(blur, imageData, blur.length);
         Filter.convolutionFilterR(edge, imageData);
 
-        // エッジ上のポイントを検出
+        // Detect points on edge
         var temp = getEdgePoint(imageData);
-        // ログ表示用に記憶しておく
+        // Store it for log display
         var detectionNum = temp.length;
 
         var points = [];
@@ -270,7 +278,7 @@
         var j, limit = Math.round(ilen * api.POINT_RATE);
         if (limit > api.POINT_MAX_NUM) limit = api.POINT_MAX_NUM;
 
-        // ポイントを間引く
+        // Thin points
         while (i < limit && i < ilen) {
             j = tlen * Math.random() | 0;
             points.push(temp[j]);
@@ -279,13 +287,13 @@
             i++;
         }
 
-        // 三角形分割
+        // Triangle split
         var delaunay = new Delaunay(width, height);
         var triangles = delaunay.insert(points).getTriangles();
 
         var t, p0, p1, p2, cx, cy;
 
-        // 三角形を塗る
+        // Paint a triangle
         for (ilen = triangles.length, i = 0; i < ilen; i++) {
             t = triangles[i];
             p0 = t.nodes[0]; p1 = t.nodes[1]; p2 = t.nodes[2];
@@ -296,7 +304,7 @@
             context.lineTo(p2.x, p2.y);
             context.lineTo(p0.x, p0.y);
 
-            // 重心を取得してその座標の色で三角形を塗りつぶす
+            // Acquire the center of gravity and fill triangle with the color of the coordinates
             cx = (p0.x + p1.x + p2.x) * 0.33333;
             cy = (p0.y + p1.y + p2.y) * 0.33333;
 
@@ -308,7 +316,7 @@
 
         image.src = canvas.toDataURL('image/png');
 
-        // ログを表示
+        // View log
         generateTime = new Date().getTime() - generateTime;
         console.log(
             'Generate completed ' + generateTime + 'ms, ' +
@@ -316,17 +324,17 @@
             triangles.length + ' triangles'
         );
 
-        // 生成の完了
+        // Completion of generation
         generating = false;
         message.innerHTML = GENERAL_MESSAGE;
     }
 
     /**
-     * エッジを判定してポイントを取得する
+     * Determine an edge and acquire a point
      *
-     * @param imageData エッジを検出するソースの ImageData
-     * @return エッジ上にランダムに分布したポイントの配列
-     * @see EDGE_DETECT_VALUE エッジと判定する 3x3 の明度の平均値
+     * @param imageData ImageData of the source that detects edges
+     * @return Array of randomly distributed points on the edge
+     * @see EDGE_DETECT_VALUE Average value of brightness of 3 × 3 to be judged as an edge
      */
     function getEdgePoint(imageData) {
         var width  = imageData.width;
@@ -372,7 +380,7 @@
     var Filter = {
 
         /**
-         * グレイスケールフィルタ, ソース用なので 1 チャンネル (Red) のみに
+         * Because it is for grayscale filter, source, only 1 channel (Red)
          */
         grayscaleFilterR: function (imageData) {
             var width  = imageData.width | 0;
@@ -400,13 +408,13 @@
         },
 
         /**
-         * 畳み込みフィルタ, ソース用なので 1 チャンネル (Red) のみに
+         * Because it is for convolution filter and source, only 1 channel (Red)
          */
         convolutionFilterR: function(matrix, imageData, divisor) {
             matrix  = matrix.slice();
             divisor = divisor || 1;
 
-            // 割る数を行列に適用する
+            // Apply a divide number to the matrix
             var divscalar = divisor ? 1 / divisor : 0;
             var k, len;
             if (divscalar !== 1) {
@@ -417,7 +425,7 @@
 
             var data = imageData.data;
 
-            // 参照用にオリジナルをコピー, グレースケールなので Red チャンネルのみ
+            // Copy the original for reference, because it is gray scale Red channel only
             len = data.length >> 2;
             var copy = new Uint8Array(len);
             for (i = 0; i < len; i++) copy[i] = data[i << 2];
@@ -449,7 +457,7 @@
 
                                 if (
                                     sx >= 0 && sx < width &&
-                                    (v = matrix[(col + range) + kstep]) // 値が 0 ならスキップ
+                                    (v = matrix[(col + range) + kstep]) // If the value is 0 skip
                                 ) {
                                     r += copy[sx + jstep] * v;
                                 }
@@ -457,7 +465,7 @@
                         }
                     }
 
-                    // 値を挟み込む
+                    // Sandwich values
                     if (r < 0) r = 0; else if (r > 255) r = 255;
 
                     data[(x + istep) << 2] = r & 0xFF;
@@ -530,10 +538,10 @@
             this.nodes = [p0, p1, p2];
             this.edges = [new Edge(p0, p1), new Edge(p1, p2), new Edge(p2, p0)];
 
-            // 今回は id は使用しない
+            // This time id is not used
             this.id = null;
 
-            // この三角形の外接円を作成する
+            // Create a circumscribed circle of this triangle
 
             var circle = this.circle = new Object();
 
@@ -600,28 +608,28 @@
                     for (ilen = triangles.length, i = 0; i < ilen; i++) {
                         t = triangles[i];
 
-                        // 座標が三角形の外接円に含まれるか調べる
+                        // It examines whether the coordinates are included in the circumscribed circle of the triangle
                         circle  = t.circle;
                         dx = circle.x - x;
                         dy = circle.y - y;
                         distSq = dx * dx + dy * dy;
 
                         if (distSq < circle.radiusSq) {
-                            // 含まれる場合三角形の辺を保存
+                            // Save edges of triangle if included
                             edges.push(t.edges[0], t.edges[1], t.edges[2]);
                         } else {
-                            // 含まれない場合は持ち越し
+                            // If not included carryover
                             temps.push(t);
                         }
                     }
 
                     polygon = [];
 
-                    // 辺の重複をチェック, 重複する場合は削除する
+                    // Check duplication of edges, delete if duplicates
                     edgesLoop: for (ilen = edges.length, i = 0; i < ilen; i++) {
                         edge = edges[i];
 
-                        // 辺を比較して重複していれば削除
+                        // Compare edges and delete if duplicates
                         for (jlen = polygon.length, j = 0; j < jlen; j++) {
                             if (edge.eq(polygon[j])) {
                                 polygon.splice(j, 1);
@@ -668,12 +676,6 @@
 
     Point.prototype = new Delaunay.Node();
 
-
-    /**
-     * デバッグ用 log 関数, log.limit(number) で出力数を制限
-     * 進捗の表示は通常の console.log
-     */
-    //var log=function(a){var b=0;var c=0;var d=function(){if(b){if(c>b)return;c++}a.console.log.apply(console,arguments)};d.limit=function(a){b=a};return d}(window)
 
     // Init
     window.addEventListener('load', init, false);
