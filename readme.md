@@ -5,6 +5,15 @@ Forked from https://github.com/timbennett/delaunay
 
 <hr>
 
+Links to authors whose code was used (for compliance with licenses;
+links from the code were deleted):
+* http://jsdo.it/akm2/89lF
+* http://jsdo.it/akm2/xoYx
+* http://jsdo.it/akm2/iMsL
+* http://jsdo.it/akm2/wTcC
+
+<hr>
+
 ## Instructions
 At first install dependencies:
 ```bash

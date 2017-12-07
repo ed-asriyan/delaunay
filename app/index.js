@@ -1,4 +1,3 @@
-// forked from akm2's "エッジ検出のテスト" http://jsdo.it/akm2/89lF
 (function(window, document) {
 
     'use strict';
@@ -402,8 +401,6 @@
 
         /**
          * 畳み込みフィルタ, ソース用なので 1 チャンネル (Red) のみに
-         *
-         * @see http://jsdo.it/akm2/iMsL
          */
         convolutionFilterR: function(matrix, imageData, divisor) {
             matrix  = matrix.slice();
@@ -474,8 +471,6 @@
 
     /**
      * Delaunay
-     *
-     * @see http://jsdo.it/akm2/wTcC
      */
     var Delaunay = (function() {
 
