@@ -14,33 +14,33 @@
 
 <div class="container">
     <form>
-        <h1>Delaunay triangulator</h1>
+        <h1>Триангулятор Делоне</h1>
         <div class="form-group">
             <input type="number" step="0.000001" name="EDGE_DETECT_VALUE" id="edge_detect_value" required="required"/>
-            <label class="control-label" for="edge_detect_value">Edge Detect</label><i class="bar"></i>
+            <label class="control-label" for="edge_detect_value">Чувствительность к контрасту:</label><i class="bar"></i>
         </div>
         <div class="form-group">
             <input type="number" step="0.000001" name="POINT_RATE" id="point_rate" required="required"/>
-            <label class="control-label" for="point_rate">Point Rate</label><i class="bar"></i>
+            <label class="control-label" for="point_rate">Плотность точек</label><i class="bar"></i>
         </div>
         <div class="form-group">
             <input type="number" step="0.000001" name="POINT_MAX_NUM" id="max_point_num" required="required"/>
-            <label class="control-label" for="max_point_num">Max Point Number</label><i class="bar"></i>
+            <label class="control-label" for="max_point_num">Лимит точек</label><i class="bar"></i>
         </div>
         <div class="form-group">
             <input type="number" step="0.000001" name="BLUR_SIZE" id="blur_size" required="required"/>
-            <label class="control-label" for="blur_size">Blur Size</label><i class="bar"></i>
+            <label class="control-label" for="blur_size">Размытие</label><i class="bar"></i>
         </div>
         <div class="form-group">
             <input type="number" step="0.000001" name="EDGE_SIZE" id="edje_size" required="required"/>
-            <label class="control-label" for="edje_size">Edge Size</label><i class="bar"></i>
+            <label class="control-label" for="edje_size">Чёткость</label><i class="bar"></i>
         </div>
         <div class="form-group">
             <input type="number" step="0.000001" name="PIXEL_LIMIT" id="pixel_limit" required="required"/>
-            <label class="control-label" for="pixel_limit">Pixel Limit</label><i class="bar"></i>
+            <label class="control-label" for="pixel_limit">Лимит пикселей</label><i class="bar"></i>
         </div>
         <div class="button-container">
-            <button class="button regenerate-btn" type="submit"><span id="message">Regenerate</span></button>
+            <button class="button regenerate-btn" type="submit"><span id="message">Сгенерировать</span></button>
         </div>
     </form>
 </div>
